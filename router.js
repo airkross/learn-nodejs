@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getTodosController, getTodoController, addTodoController, deleteTodoController } from './controllers.js'
+import { getTodosController, getTodoController, addTodoController, editTodoController, deleteTodoController } from './controllers.js'
 
 const router = new Router()
 
@@ -9,6 +9,8 @@ router.get("/todos/:id", getTodoController);
 
 router.post("/todos", addTodoController);
 
-router.post("/todo-delete", deleteTodoController);
+router.put("/todos/:id", editTodoController);
+
+router.post("/todos/:id", deleteTodoController);
 
 export default router

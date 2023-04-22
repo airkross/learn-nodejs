@@ -14,21 +14,30 @@ const addTodo = (todo) => {
   return true;
 };
 
-const deleteTodoById = (id) => {
-  const index = todos.findIndex((todo) => todo.id === +id);
-
-  if (index !== -1) {
-    todos.splice(index, 1)
-
-    return true;
+const editTodo = (id, todo) => {
+  const index = todos.findIndex(({ id: todoId }) => todoId === +id)
+  if (index === -1) {
+    return false
   }
   
-  return false
+  todos.splice(index, 1, todo)
+  return true;
+};
+
+const deleteTodoById = (id) => {
+  const index = todos.findIndex((todo) => todo.id === +id);
+  if (index === -1) {
+    return false;
+  }
+
+  todos.splice(index, 1)
+  return true
 };
 
 export {
     getTodos,
     getTodoById,
     addTodo,
+    editTodo,
     deleteTodoById,
 }
