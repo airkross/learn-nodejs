@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { getTodosController, getTodoController, addTodoController, editTodoController, deleteTodoController } from './controllers.js'
+import { getTodosController, getTodoController, addTodoController, editTodoController, deleteTodoController } from './controllers'
 
-const router = new Router()
+const router = Router()
 
 router.get("/todos", getTodosController);
 

@@ -1,8 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import { PORT } from "./constants.js";
-import router from "./router.js";
+import { PORT } from "./constants";
+import router from "./router";
 
 const app = express();
 

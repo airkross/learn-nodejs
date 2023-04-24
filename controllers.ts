@@ -1,14 +1,15 @@
-import { getTodos, getTodoById, addTodo, editTodo, deleteTodoById } from "./store.js";
+import { Request, Response } from 'express'
+import { getTodos, getTodoById, addTodo, editTodo, deleteTodoById } from "./store";
 
-const getTodosController = async (req, res) => {
+const getTodosController = async (req: Request, res: Response): Promise<void> => {
   const todos = await getTodos();
 
   res.status(200).json(todos);
 };
 
-const getTodoController = async (req, res) => {
+const getTodoController = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const todo = await getTodoById(id);
+  const todo = await getTodoById(Number(id));
 
   if (todo) {
     res.status(200).json(todo);
@@ -19,7 +20,7 @@ const getTodoController = async (req, res) => {
   });
 };
 
-const addTodoController = async (req, res) => {
+const addTodoController = async (req: Request, res: Response): Promise<void> => {
   const todo = req.body;
   const isSuccess = await addTodo(todo);
 
@@ -35,10 +36,10 @@ const addTodoController = async (req, res) => {
   });
 };
 
-const editTodoController = async (req, res) => {
+const editTodoController = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const todo = req.body;
-  const isSuccess = await editTodo(id, todo);
+  const isSuccess = await editTodo(Number(id), todo);
 
   if (isSuccess) {
     res.status(200).json({
@@ -54,9 +55,9 @@ const editTodoController = async (req, res) => {
 
 
 
-const deleteTodoController = async (req, res) => {
+const deleteTodoController = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const isSuccess = await deleteTodoById(id);
+  const isSuccess = await deleteTodoById(Number(id));
 
   if (isSuccess) {
     res.status(200).send({
