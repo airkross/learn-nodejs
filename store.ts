@@ -6,7 +6,7 @@ export interface Todo {
 
 const todos: Array<Todo> = [];
 
-const getTodos = (): Array<Todo> => {
+const getTodos = () => {
   return todos;
 };
 
