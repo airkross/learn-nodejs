@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getTodos, getTodoById, addTodo, editTodo, deleteTodoById } from "./store";
+import { getTodos, getTodoById, addTodo, editTodo, deleteTodoById } from "./todos.model";
 
 const getTodosController = async (req: Request, res: Response): Promise<void> => {
   const todos = await getTodos();

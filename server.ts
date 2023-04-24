@@ -1,10 +1,25 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import { PORT } from "./constants";
-import router from "./router";
 
 const app = express();
+
+const routesFolder = path.join(__dirname, "modules");
+const readRoutesFolder = (folderPath: string): void => {
+  const folderItems = fs.readdirSync(folderPath);
+  folderItems.forEach((item) => {
+    const itemPath = path.join(folderPath, item);
+    if (fs.statSync(itemPath).isFile() && item.endsWith(".routes.ts")) {
+      import(itemPath).then((module) => app.use(module.default));
+    } else if (fs.statSync(itemPath).isDirectory()) {
+      readRoutesFolder(itemPath);
+    }
+  });
+};
+readRoutesFolder(routesFolder);
 
 app.use(
   bodyParser.urlencoded({
@@ -12,7 +27,6 @@ app.use(
   })
 );
 app.use(bodyParser.json());
-app.use(router);
 
 try {
   mongoose.connect(`mongodb://localhost:27017`, {
