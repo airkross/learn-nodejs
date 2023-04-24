@@ -11,9 +11,11 @@ project
 │   └── express.ts
 ├── modules
 │   └──[module_name]
-│       ├── [module_name].controller.js
-│       ├── [module_name].model.js
-│       └── [module_name].route.js
+│       ├── [module_name].types.ts
+│       ├── [module_name].constants.ts
+│       ├── [module_name].controller.ts
+│       ├── [module_name].model.ts
+│       └── [module_name].route.ts
 ├── public
 │   ├── css
 │   │   └── style.css
