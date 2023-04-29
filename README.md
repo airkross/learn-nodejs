@@ -4,11 +4,15 @@ Project structure
 
 ```
 project
-├── server.ts
+├── app.ts
+├── docker-compose.yaml
 ├── config
-│   ├── db.ts
+│   ├── database
+│   │   ├── database-wrapper.ts
+│   │   └── [database_name]-database.ts
 │   ├── env.ts
-│   └── express.ts
+│   └── express
+        └── express-wrapper.ts
 ├── modules
 │   └──[module_name]
 │       ├── [module_name].types.ts
