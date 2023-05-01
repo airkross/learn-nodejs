@@ -1,74 +1,106 @@
 import { Request, Response } from "express";
-import { getTodos, getTodoById, addTodo, editTodo, deleteTodoById } from "./todos.model";
+import { TodoModel } from "./todos.model";
+import mongoose from "mongoose";
+
+/**
+ * @todo сделать абстракцию которая будет включать в себя метод который будет принимать статус и пейлод
+ */
 
 const getTodosController = async (req: Request, res: Response): Promise<void> => {
-    const todos = await getTodos();
-
-    res.status(200).json(todos);
-    return
+    try {
+        const todos = await TodoModel.find();
+        res.status(200).json(todos);
+    } catch (error) {
+        res.status(500).send(`Ошибка сервера: ${error}`);
+    }
 };
 
 const getTodoController = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const todo = await getTodoById(Number(id));
+    try {
+        const { id } = req.params;
+        const isValidId = mongoose.Types.ObjectId.isValid(id);
+        const onError = () => res.status(404).json({ message: `Заметка с id=${id} не существует.` })
+        if (!isValidId) {
+            onError()
+        }
 
-    if (todo) {
-        res.status(200).json(todo);
-        return
+        const todo = await TodoModel.findById(id);
+
+        if (todo) {
+            res.status(200).json(todo);
+        } else {
+            onError()
+        }
+    } catch (error) {
+        res.status(500).send(`Ошибка сервера: ${error}`);
     }
-
-    res.status(404).json({
-        message: `Заметка с id=${id} не существует.`,
-    });
 };
 
 const addTodoController = async (req: Request, res: Response): Promise<void> => {
-    const todo = req.body;
-    const isSuccess = await addTodo(todo);
+    try {
+        const newTodo = await new TodoModel({ ...req.body }).save();
 
-    if (isSuccess) {
-        res.status(200).json({
-            message: "Заметка усшено создана.",
+        if (newTodo) {
+            res.status(201).json({
+                details: newTodo,
+                message: "Заметка усшено создана.",
+            });
+            return;
+        }
+
+        res.status(400).json({
+            message: "Ошбика создания заметки.",
         });
-        return;
+    } catch (error) {
+        res.status(500).send(`Ошибка сервера: ${error}`);
     }
-
-    res.status(400).json({
-        message: "Ошбика создания заметки.",
-    });
 };
 
 const editTodoController = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const todo = req.body;
-    const isSuccess = await editTodo(Number(id), todo);
+    try {
+        const { id } = req.params;
+        const isValidId = mongoose.Types.ObjectId.isValid(id);
 
-    if (isSuccess) {
+        if (!isValidId) {
+            res.status(404).json({
+                message: `Заметка с id=${id} не существует.`,
+            });
+
+            return;
+        }
+
+        await TodoModel.updateOne({ _id: id }, req.body);
+
+        const updatedTodo = await TodoModel.findById(id);
+
         res.status(200).json({
-            message: "Заметка усшено редактирована.",
+            details: updatedTodo,
+            message: "Заметка усшено редактирована",
         });
-        return;
+    } catch (error) {
+        res.status(500).send(`Ошибка сервера: ${error}`);
     }
-
-    res.status(404).json({
-        message: `Заметка с id=${id} не существует.`,
-    });
 };
 
 const deleteTodoController = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const isSuccess = await deleteTodoById(Number(id));
+    try {
+        const { id } = req.params;
+        const deletedTodo = await TodoModel.findByIdAndDelete(id);
 
-    if (isSuccess) {
-        res.status(200).send({
-            message: `Заметка с id=${id} успешно удалена`,
+        if (deletedTodo) {
+            res.status(200).send({
+                details: deletedTodo,
+                message: `Заметка с id=${id} успешно удалена`,
+            });
+            return;
+        }
+
+        res.status(404).json({
+            message: `Заметка с id=${id} не существует.`,
         });
-        return;
+    } catch (error) {
+        res.status(500).send(`Ошибка сервера: ${error}`);
     }
-
-    res.status(404).json({
-        message: `Заметка с id=${id} не существует.`,
-    });
 };
 
 export { getTodosController, getTodoController, addTodoController, editTodoController, deleteTodoController };

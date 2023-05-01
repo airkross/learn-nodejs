@@ -6,6 +6,7 @@ export const DB_CONFIG: DBConfig = {
     port: 27017,
     user: "admin",
     pass: "123",
+    dbName: 'todos-database',
     authSource: "todos-database",
     authMechanism: "DEFAULT",
 };

@@ -11,6 +11,6 @@ router.post("/todos", addTodoController);
 
 router.put("/todos/:id", editTodoController);
 
-router.post("/todos/:id", deleteTodoController);
+router.delete("/todos/:id", deleteTodoController);
 
 export default router;
