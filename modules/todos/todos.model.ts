@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 /**
- * @todo возможно сделать абстракцию над mongoose.Schema
+ * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema
  */
 
 const Todo = new mongoose.Schema({

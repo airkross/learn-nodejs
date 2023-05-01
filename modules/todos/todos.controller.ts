@@ -3,7 +3,7 @@ import { TodoModel } from "./todos.model";
 import mongoose from "mongoose";
 
 /**
- * @todo возможно сделать абстракцию над контроллерами в config/modules/base.controller.ts
+ * @todo возможно сделать обертку над контроллерами в config/modules/base.controller.ts
  */
 
 class TodosController {
