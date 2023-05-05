@@ -5,13 +5,15 @@ import mongoose from "mongoose";
  */
 
 const Todo = new mongoose.Schema({
+    isChecked: {
+        type: Boolean,
+    },
     title: {
         type: String,
         required: true,
     },
     description: {
         type: String,
-        required: true,
     },
 });
 

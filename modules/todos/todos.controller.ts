@@ -38,7 +38,7 @@ class TodosController {
 
     async addTodo(req: Request, res: Response): Promise<void> {
         try {
-            const newTodo = await new TodoModel({ ...req.body }).save();
+            const newTodo = await new TodoModel({ ...req.body, isChecked: false }).save();
 
             if (newTodo) {
                 res.status(201).json({
@@ -63,6 +63,35 @@ class TodosController {
 
             if (isValidId) {
                 await TodoModel.updateOne({ _id: id }, req.body);
+
+                const updatedTodo = await TodoModel.findById(id);
+
+                res.status(200).json({
+                    details: updatedTodo,
+                    message: "Заметка усшено редактирована",
+                });
+                
+                return
+            }
+
+            res.status(404).json({  message: `Заметка с id=${id} не существует.` });
+        } catch (error) {
+            res.status(500).send(`Ошибка сервера: ${error}`);
+        }
+    }
+
+    async checkTodo(req: Request, res: Response): Promise<void> {
+        try {
+            const { id } = req.params;
+            const { isChecked } = req.body
+            const isValidId = mongoose.Types.ObjectId.isValid(id);
+
+            if (isChecked === undefined) {
+                res.status(400).json({  message: `Поле isChecked обязательно для заполнения` });
+            }
+
+            if (isValidId && isChecked !== undefined) {
+                await TodoModel.findOneAndUpdate({ _id: id }, { isChecked });
 
                 const updatedTodo = await TodoModel.findById(id);
 
