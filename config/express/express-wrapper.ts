@@ -20,7 +20,11 @@ export class ExpressWrapper {
                 const itemPath = path.join(folderPath, item);
 
                 if (fs.statSync(itemPath).isFile() && item.endsWith(".routes.ts")) {
-                    import(itemPath).then((module) => this.express.use(module.default))
+                    import(itemPath).then((module) => {
+                        if (typeof module.default === "function") {
+                            this.express.use(module.default);
+                        }
+                    });
                 } else if (fs.statSync(itemPath).isDirectory()) {
                     readRoutesFolder(itemPath);
                 }
