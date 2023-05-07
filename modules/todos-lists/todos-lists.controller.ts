@@ -1,20 +1,18 @@
 import { Request, Response } from "express";
+import { BaseModuleController } from "../../config/base-module/base-module.controller";
+import { TodosListModelProps } from "./todos-list.types";
 import { TodosListModel } from "./todos-lists.model";
-/**
- * @todo порефачить связи между модулями (можно через конструктро добавлять хендлеры)
- */
-import { TodoModel } from "../todos/todos.model";
+import todosController from "../todos/todos.controller";
 import mongoose from "mongoose";
 
 /**
- * @todo унаследоваться от BaseModuleController и сделать по налаогии с TodosController. + через TodosController получать модель для работы с БД
- * TodosController - положить через конструктор в свойство
+ * @todo подумать как уменьшить связность кода с todosController
  */
 
-class TodosListsController {
+class TodosListsController extends BaseModuleController<TodosListModelProps> {
     async getTodosLists(req: Request, res: Response): Promise<void> {
         try {
-            const todosLists = await TodosListModel.find();
+            const todosLists = await this.model.find();
             res.status(200).json(todosLists);
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
@@ -27,7 +25,7 @@ class TodosListsController {
             const isValidId = mongoose.Types.ObjectId.isValid(id);
 
             if (isValidId) {
-                const todosList = await TodosListModel.findById(id);
+                const todosList = await this.model.findById(id);
 
                 if (todosList) {
                     res.status(200).json(todosList);
@@ -43,7 +41,7 @@ class TodosListsController {
 
     async addTodosList(req: Request, res: Response): Promise<void> {
         try {
-            const newTodosList = await new TodosListModel({ ...req.body }).save();
+            const newTodosList = await new this.model({ ...req.body }).save();
 
             if (newTodosList) {
                 res.status(201).json({
@@ -67,9 +65,9 @@ class TodosListsController {
             const isValidId = mongoose.Types.ObjectId.isValid(id);
 
             if (isValidId) {
-                await TodosListModel.updateOne({ _id: id }, req.body);
+                await this.model.updateOne({ _id: id }, req.body);
 
-                const updatedTodosList = await TodosListModel.findById(id);
+                const updatedTodosList = await this.model.findById(id);
 
                 res.status(200).json({
                     details: updatedTodosList,
@@ -90,14 +88,9 @@ class TodosListsController {
             const { id } = req.params;
             const isValidId = mongoose.Types.ObjectId.isValid(id);
             if (isValidId) {
-                const deletedTodosList = await TodosListModel.findByIdAndDelete(id);
-                const deletedTodo = await TodoModel.deleteMany({ todosListId: id });
-                /**
-                 * @todo сделать доп обработку на deletedTodosList и deletedTodo
-                 * создать бейз-контроллер положить туда модель и наследоваться от него
-                 * а потом через сонтроллер обращаться к моделям нужной сущности (тут про TodoModel)
-                 * чтобы исплючить взаимодействие чужого контроллера с чужой моделью
-                 */
+                const deletedTodosList = await this.model.findByIdAndDelete(id);
+                const deletedTodo = await todosController.model.deleteMany({ todosListId: id });
+
                 if (deletedTodosList && deletedTodo) {
                     res.status(200).send({
                         details: deletedTodosList,
@@ -116,4 +109,4 @@ class TodosListsController {
     }
 }
 
-export default new TodosListsController();
+export default new TodosListsController(TodosListModel);

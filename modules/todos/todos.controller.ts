@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
 import { TodoModel } from "./todos.model";
 import { TodoModelProps } from "./todos.types";
-import { TodosListModel } from "../todos-lists/todos-lists.model";
+import todosListsController from "../todos-lists/todos-lists.controller";
 import mongoose from "mongoose";
 
 class TodosController extends BaseModuleController<TodoModelProps> {
@@ -50,11 +50,7 @@ class TodosController extends BaseModuleController<TodoModelProps> {
             const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
             if (isValidListId) {
-                /**
-                 * @todo после того как добавлю модель в TodosListsController, обращаться к моделе листа через TodosListsController.
-                 * + положить TodosListsController в свойство класса через конструктор, что понизит связность кода
-                 */
-                const todoList = await TodosListModel.findById(list_id);
+                const todoList = await todosListsController.model.findById(list_id);
                 const newTodo = await new this.model({
                     ...req.body,
                     isChecked: false,

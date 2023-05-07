@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { TodosListModelProps } from './todos-list.types'
 
 /**
  * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema
@@ -14,4 +15,4 @@ const TodoList = new mongoose.Schema({
     },
 });
 
-export const TodosListModel = mongoose.model("TodosLists", TodoList);
+export const TodosListModel = mongoose.model<TodosListModelProps>("TodosLists", TodoList);
