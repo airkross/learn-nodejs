@@ -1,7 +1,7 @@
 import { Router } from "express";
-import TodosController from "./todos.controller";
+import todosController from "./todos.controller";
 
-const { getTodos, getTodo, addTodo, editTodo, checkTodo, deleteTodo } = TodosController;
+const { getTodos, getTodo, addTodo, editTodo, checkTodo, deleteTodo } = todosController;
 const router = Router();
 
 router.get("/todos-lists/:list_id/todos", getTodos);

@@ -87,17 +87,23 @@ class TodosListsController {
     async deleteTodosList(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const deletedTodosList = await TodosListModel.findByIdAndDelete(id);
-            const deletedTodo = await TodoModel.deleteMany({ todosListId: id });
-            /**
-             * @todo сделать доп обработку на deletedTodosList и deletedTodo
-             */
-            if (deletedTodosList && deletedTodo) {
-                res.status(200).send({
-                    details: deletedTodosList,
-                    message: `Cписок заметок с id=${id} успешно удален.`,
-                });
-                return;
+            const isValidId = mongoose.Types.ObjectId.isValid(id);
+            if (isValidId) {
+                const deletedTodosList = await TodosListModel.findByIdAndDelete(id);
+                const deletedTodo = await TodoModel.deleteMany({ todosListId: id });
+                /**
+                 * @todo сделать доп обработку на deletedTodosList и deletedTodo
+                 * создать бейз-контроллер положить туда модель и наследоваться от него
+                 * а потом через сонтроллер обращаться к моделям нужной сущности (тут про TodoModel)
+                 * чтобы исплючить взаимодействие чужого контроллера с чужой моделью
+                 */
+                if (deletedTodosList && deletedTodo) {
+                    res.status(200).send({
+                        details: deletedTodosList,
+                        message: `Cписок заметок с id=${id} успешно удален.`,
+                    });
+                    return;
+                }
             }
 
             res.status(404).json({
