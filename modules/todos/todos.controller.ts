@@ -1,19 +1,17 @@
 import { Request, Response } from "express";
+import { BaseModuleController } from "../../config/base-module/base-module.controller";
 import { TodoModel } from "./todos.model";
+import { TodoModelProps } from "./todos.types";
 import { TodosListModel } from "../todos-lists/todos-lists.model";
 import mongoose from "mongoose";
 
-/**
- * @todo возможно сделать обертку над контроллерами в config/modules/base.controller.ts
- */
-
-class TodosController {
+class TodosController extends BaseModuleController<TodoModelProps> {
     async getTodos(req: Request, res: Response): Promise<void> {
         try {
             const { id, list_id } = req.params;
             const isValidId = mongoose.Types.ObjectId.isValid(list_id);
             if (isValidId) {
-                const todos = await TodoModel.find({ todosListId: list_id });
+                const todos = await this.model.find({ todosListId: list_id });
                 res.status(200).json(todos);
                 return;
             }
@@ -32,7 +30,7 @@ class TodosController {
             const isValidId = mongoose.Types.ObjectId.isValid(id);
 
             if (isValidId) {
-                const todo = await TodoModel.findById(id);
+                const todo = await this.model.findById(id);
 
                 if (todo) {
                     res.status(200).json(todo);
@@ -52,8 +50,12 @@ class TodosController {
             const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
             if (isValidListId) {
+                /**
+                 * @todo после того как добавлю модель в TodosListsController, обращаться к моделе листа через TodosListsController.
+                 * + положить TodosListsController в свойство класса через конструктор, что понизит связность кода
+                 */
                 const todoList = await TodosListModel.findById(list_id);
-                const newTodo = await new TodoModel({
+                const newTodo = await new this.model({
                     ...req.body,
                     isChecked: false,
                     todosListId: todoList?._id,
@@ -86,9 +88,9 @@ class TodosController {
              * @todo добавить раздельные проверки
              */
             if (isValidTodoId && isValidListId) {
-                await TodoModel.findOneAndUpdate({ _id: id, todosListId: list_id }, req.body);
+                await this.model.findOneAndUpdate({ _id: id, todosListId: list_id }, req.body);
 
-                const updatedTodo = await TodoModel.findById(id);
+                const updatedTodo = await this.model.findById(id);
 
                 res.status(200).json({
                     details: updatedTodo,
@@ -116,9 +118,9 @@ class TodosController {
             }
 
             if (isValidTodoId && isValidListId && isChecked !== undefined) {
-                await TodoModel.findOneAndUpdate({ _id: id, todosListId: list_id }, { isChecked });
+                await this.model.findOneAndUpdate({ _id: id, todosListId: list_id }, { isChecked });
 
-                const updatedTodo = await TodoModel.findById(id);
+                const updatedTodo = await this.model.findById(id);
 
                 res.status(200).json({
                     details: updatedTodo,
@@ -142,7 +144,7 @@ class TodosController {
             const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
             if (isValidTodoId && isValidListId) {
-                const deletedTodo = await TodoModel.findOneAndDelete({ _id: id, todosListId: list_id });
+                const deletedTodo = await this.model.findOneAndDelete({ _id: id, todosListId: list_id });
 
                 if (deletedTodo) {
                     res.status(200).send({
@@ -162,4 +164,4 @@ class TodosController {
     }
 }
 
-export default new TodosController();
+export default new TodosController(TodoModel);

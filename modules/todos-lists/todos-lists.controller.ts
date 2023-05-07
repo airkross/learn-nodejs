@@ -7,7 +7,8 @@ import { TodoModel } from "../todos/todos.model";
 import mongoose from "mongoose";
 
 /**
- * @todo возможно сделать обертку над контроллерами в config/modules/base.controller.ts
+ * @todo унаследоваться от BaseModuleController и сделать по налаогии с TodosController. + через TodosController получать модель для работы с БД
+ * TodosController - положить через конструктор в свойство
  */
 
 class TodosListsController {
