@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 import { TodosListModel } from "./todos-lists.model";
+/**
+ * @todo порефачить связи между модулями (можно через конструктро добавлять хендлеры)
+ */
+import { TodoModel } from "../todos/todos.model";
 import mongoose from "mongoose";
 
 /**
@@ -83,10 +87,12 @@ class TodosListsController {
     async deleteTodosList(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            // найти все тудушки списка и удалить их
             const deletedTodosList = await TodosListModel.findByIdAndDelete(id);
-
-            if (deletedTodosList) {
+            const deletedTodo = await TodoModel.deleteMany({ todosListId: id });
+            /**
+             * @todo сделать доп обработку на deletedTodosList и deletedTodo
+             */
+            if (deletedTodosList && deletedTodo) {
                 res.status(200).send({
                     details: deletedTodosList,
                     message: `Cписок заметок с id=${id} успешно удален.`,
