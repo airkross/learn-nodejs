@@ -15,6 +15,10 @@ const Todo = new mongoose.Schema({
     description: {
         type: String,
     },
+    todosListId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "TodosLists",
+    },
 });
 
 export const TodoModel = mongoose.model("todos", Todo);

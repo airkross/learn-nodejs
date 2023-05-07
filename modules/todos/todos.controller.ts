@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { TodoModel } from "./todos.model";
+import { TodosListModel } from "../todos-lists/todos-lists.model";
 import mongoose from "mongoose";
 
 /**
@@ -9,8 +10,17 @@ import mongoose from "mongoose";
 class TodosController {
     async getTodos(req: Request, res: Response): Promise<void> {
         try {
-            const todos = await TodoModel.find();
-            res.status(200).json(todos);
+            const { id, list_id } = req.params;
+            const isValidId = mongoose.Types.ObjectId.isValid(list_id);
+            if (isValidId) {
+                const todos = await TodoModel.find({ todosListId: list_id });
+                res.status(200).json(todos);
+                return;
+            }
+
+            res.status(404).json({
+                message: `Список заметок с id=${id} не существу`,
+            });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -26,11 +36,11 @@ class TodosController {
 
                 if (todo) {
                     res.status(200).json(todo);
-                    return
+                    return;
                 }
             }
 
-            res.status(404).json({ message: `Заметка с id=${id} не существует.` })
+            res.status(404).json({ message: `Заметка с id=${id} не существует.` });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -38,18 +48,28 @@ class TodosController {
 
     async addTodo(req: Request, res: Response): Promise<void> {
         try {
-            const newTodo = await new TodoModel({ ...req.body, isChecked: false }).save();
+            const { list_id } = req.params;
+            const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
-            if (newTodo) {
-                res.status(201).json({
-                    details: newTodo,
-                    message: "Заметка усшено создана.",
-                });
-                return;
+            if (isValidListId) {
+                const todoList = await TodosListModel.findById(list_id);
+                const newTodo = await new TodoModel({
+                    ...req.body,
+                    isChecked: false,
+                    todosListId: todoList?._id,
+                }).save();
+
+                if (newTodo) {
+                    res.status(201).json({
+                        details: newTodo,
+                        message: "Заметка усшено создана.",
+                    });
+                    return;
+                }
             }
 
-            res.status(400).json({
-                message: "Ошбика создания заметки.",
+            res.status(404).json({
+                message: `Список заметок с id=${list_id} не существу`,
             });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
@@ -58,11 +78,15 @@ class TodosController {
 
     async editTodo(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const isValidId = mongoose.Types.ObjectId.isValid(id);
+            const { id, list_id } = req.params;
+            const isValidTodoId = mongoose.Types.ObjectId.isValid(id);
+            const isValidListId = mongoose.Types.ObjectId.isValid(id);
 
-            if (isValidId) {
-                await TodoModel.updateOne({ _id: id }, req.body);
+            /**
+             * @todo добавить раздельные проверки
+             */
+            if (isValidTodoId && isValidListId) {
+                await TodoModel.findOneAndUpdate({ _id: id, todosListId: list_id }, req.body);
 
                 const updatedTodo = await TodoModel.findById(id);
 
@@ -70,11 +94,11 @@ class TodosController {
                     details: updatedTodo,
                     message: "Заметка усшено редактирована",
                 });
-                
-                return
+
+                return;
             }
 
-            res.status(404).json({  message: `Заметка с id=${id} не существует.` });
+            res.status(404).json({ message: `Заметка с id=${id} не существует.` });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -82,16 +106,17 @@ class TodosController {
 
     async checkTodo(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const { isChecked } = req.body
-            const isValidId = mongoose.Types.ObjectId.isValid(id);
+            const { id, list_id } = req.params;
+            const { isChecked } = req.body;
+            const isValidTodoId = mongoose.Types.ObjectId.isValid(id);
+            const isValidListId = mongoose.Types.ObjectId.isValid(id);
 
             if (isChecked === undefined) {
-                res.status(400).json({  message: `Поле isChecked обязательно для заполнения` });
+                res.status(400).json({ message: `Поле isChecked обязательно для заполнения` });
             }
 
-            if (isValidId && isChecked !== undefined) {
-                await TodoModel.findOneAndUpdate({ _id: id }, { isChecked });
+            if (isValidTodoId && isValidListId && isChecked !== undefined) {
+                await TodoModel.findOneAndUpdate({ _id: id, todosListId: list_id }, { isChecked });
 
                 const updatedTodo = await TodoModel.findById(id);
 
@@ -99,11 +124,11 @@ class TodosController {
                     details: updatedTodo,
                     message: "Заметка усшено редактирована",
                 });
-                
-                return
+
+                return;
             }
 
-            res.status(404).json({  message: `Заметка с id=${id} не существует.` });
+            res.status(404).json({ message: `Заметка с id=${id} не существует.` });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -111,15 +136,21 @@ class TodosController {
 
     async deleteTodo(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const deletedTodo = await TodoModel.findByIdAndDelete(id);
+            const { id, list_id } = req.params;
 
-            if (deletedTodo) {
-                res.status(200).send({
-                    details: deletedTodo,
-                    message: `Заметка с id=${id} успешно удалена`,
-                });
-                return;
+            const isValidTodoId = mongoose.Types.ObjectId.isValid(id);
+            const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
+
+            if (isValidTodoId && isValidListId) {
+                const deletedTodo = await TodoModel.findOneAndDelete({ _id: id, todosListId: list_id });
+
+                if (deletedTodo) {
+                    res.status(200).send({
+                        details: deletedTodo,
+                        message: `Заметка с id=${id} успешно удалена`,
+                    });
+                    return;
+                }
             }
 
             res.status(404).json({
