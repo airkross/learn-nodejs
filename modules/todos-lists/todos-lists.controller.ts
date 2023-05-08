@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
-import { TodosListModelProps } from "./todos-list.types";
+import { TodosListsModelValues } from "./todos-list.types";
 import { TodosListModel } from "./todos-lists.model";
 import todosController from "../todos/todos.controller";
 import mongoose from "mongoose";
@@ -9,8 +9,9 @@ import mongoose from "mongoose";
  * @todo подумать как уменьшить связность кода с todosController
  */
 
-class TodosListsController extends BaseModuleController<TodosListModelProps> {
+export class TodosListsController extends BaseModuleController<TodosListsModelValues> {
     async getTodosLists(req: Request, res: Response): Promise<void> {
+        console.log(321) // остановился тут, понять почему не доходят запросы сюда
         try {
             const todosLists = await this.model.find();
             res.status(200).json(todosLists);
@@ -108,5 +109,3 @@ class TodosListsController extends BaseModuleController<TodosListModelProps> {
         }
     }
 }
-
-export default new TodosListsController(TodosListModel);

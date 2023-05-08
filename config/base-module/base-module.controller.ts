@@ -1,8 +1,10 @@
 import { Model } from "mongoose"
+import { BaseModelValues } from './base-module.types'
 
-export type BaseModelValue = Record<string, unknown>
-
-export class BaseModuleController<M extends BaseModelValue = BaseModelValue> {
+export class BaseModuleController<M extends BaseModelValues = BaseModelValues> {
+    /**
+     * @todo возможно убрать отсюда модель и перенести в индексный файл расширив дженерики
+     */
     model!: Model<M>
 
     /**

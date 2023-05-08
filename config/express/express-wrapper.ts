@@ -19,10 +19,11 @@ export class ExpressWrapper {
             fs.readdirSync(folderPath).forEach((item) => {
                 const itemPath = path.join(folderPath, item);
 
-                if (fs.statSync(itemPath).isFile() && item.endsWith(".routes.ts")) {
+                if (fs.statSync(itemPath).isFile() && item === 'index.ts') {
                     import(itemPath).then((module) => {
-                        if (typeof module.default === "function") {
-                            this.express.use(module.default);
+                        const { router } = module.default.routerModule
+                        if (typeof router === "function") {
+                            this.express.use(router);
                         }
                     });
                 } else if (fs.statSync(itemPath).isDirectory()) {

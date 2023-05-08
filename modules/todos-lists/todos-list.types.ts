@@ -1,6 +1,10 @@
-import { BaseModelValue } from "../../config/base-module/base-module.controller";
+import { BaseModuleParams, BaseModelValues } from "../../config/base-module/base-module.types";
+import { TodosListsRouter } from './todos-lists.routes'
+import { TodosListsController } from './todos-lists.controller'
 
-export interface TodosListModelProps extends BaseModelValue {
+export interface TodosListsModelValues extends BaseModelValues {
     title: string
     description?: string
 }
+
+export type TodosListsModuleParams = BaseModuleParams<TodosListsRouter, TodosListsModelValues, TodosListsController>

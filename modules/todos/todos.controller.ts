@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
 import { TodoModel } from "./todos.model";
-import { TodoModelProps } from "./todos.types";
-import todosListsController from "../todos-lists/todos-lists.controller";
+import { TodoModelValues } from "./todos.types";
+import todosModule from "../todos-lists";
 import mongoose from "mongoose";
 
-class TodosController extends BaseModuleController<TodoModelProps> {
+export class TodosController extends BaseModuleController<TodoModelValues> {
     async getTodos(req: Request, res: Response): Promise<void> {
         try {
             const { id, list_id } = req.params;
@@ -50,7 +50,10 @@ class TodosController extends BaseModuleController<TodoModelProps> {
             const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
             if (isValidListId) {
-                const todoList = await todosListsController.model.findById(list_id);
+                /**
+                 * @todo использовать todosModule через конструктор
+                 */
+                const todoList = await todosModule.controllerModule.model.findById(list_id);
                 const newTodo = await new this.model({
                     ...req.body,
                     isChecked: false,
