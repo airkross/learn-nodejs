@@ -4,7 +4,7 @@ import { TodosListsController } from "./todos-lists.controller";
 import { TodosListsModelValues } from "./todos-lists.types";
 
 export class TodosListsModule extends BaseModule<TodosListsModelValues, TodosListsController, TodosListsRouter> {
-    protected override getRouterModule() {
+    protected override getRouter() {
         return new TodosListsRouter();
     }
 }

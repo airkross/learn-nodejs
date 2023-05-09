@@ -15,10 +15,10 @@ export class BaseModule<
     }
 
     protected init(): void {
-        this.routerModule = this.getRouterModule();
+        this.routerModule = this.getRouter();
     }
 
-    protected getRouterModule(): R {
+    protected getRouter(): R {
         throw new Error("Method not implemented.");
     }
 }
