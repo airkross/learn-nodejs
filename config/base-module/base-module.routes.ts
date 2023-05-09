@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { BaseModuleController } from "./base-module.controller";
-import { BaseModelValues, BaseRouterModuleParams } from "./base-module.types";
+import { BaseModelValues } from "./base-module.types";
 
 export class BaseModuleRoutes<
     V extends BaseModelValues, 
@@ -9,14 +9,15 @@ export class BaseModuleRoutes<
     router!: ReturnType<typeof Router>;
     controllerModule!: C;
 
-    constructor({ controllerModule }: BaseRouterModuleParams<V, C>) {
+    constructor() {
         this.router = Router();
-        this.controllerModule = controllerModule;
-        /**
-         * @todo исправить баг с тем что роуты инициализируются до того как появляется конструктор в дочернем классе
-         * возможно перенести конструкторМодуль в этот класс из ребенка
-         */
+        this.controllerModule = this.getController();
+
         this.routesInit();
+    }
+
+    protected getController(): C {
+        throw new Error("Method not implemented.");
     }
 
     protected routesInit(): void {

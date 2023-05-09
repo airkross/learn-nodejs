@@ -3,6 +3,10 @@ import { TodosController } from "./todos.controller";
 import { TodosModelValues } from "./todos.types";
 
 export class TodosRouter extends BaseModuleRoutes<TodosModelValues, TodosController> {
+    protected override getController(): TodosController {
+        return new TodosController()
+    }
+
     override routesInit() {
         this.router.get("/todos-lists/:list_id/todos", this.controllerModule.getTodos.bind(this.controllerModule));
 

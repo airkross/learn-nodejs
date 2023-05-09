@@ -9,22 +9,16 @@ export class BaseModule<
     R extends BaseModuleRoutes<V, C>
 > {
     routerModule!: R;
-    controllerModule!: C;
 
     constructor() {
         this.init();
     }
 
     protected init(): void {
-        this.controllerModule = this.getControllerModule();
         this.routerModule = this.getRouterModule();
     }
 
     protected getRouterModule(): R {
-        throw new Error("Method not implemented.");
-    }
-
-    protected getControllerModule(): C {
         throw new Error("Method not implemented.");
     }
 }

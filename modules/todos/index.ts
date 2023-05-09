@@ -5,13 +5,7 @@ import { TodosModelValues } from "./todos.types";
 
 export class TodosModule extends BaseModule<TodosModelValues, TodosController, TodosRouter> {
     protected override getRouterModule() {
-        return new TodosRouter({
-            controllerModule: this.controllerModule,
-        });
-    }
-
-    protected override getControllerModule() {
-        return new TodosController();
+        return new TodosRouter();
     }
 }
 
