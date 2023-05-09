@@ -1,17 +1,22 @@
+import mongoose from "mongoose";
 import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
-import { TodosListsModelValues } from "./todos-list.types";
-import { TodosListModel } from "./todos-lists.model";
-import todosController from "../todos/todos.controller";
-import mongoose from "mongoose";
+import { TodosListsControllerModuleParams } from "./todos-list.types";
 
-/**
- * @todo подумать как уменьшить связность кода с todosController
- */
+export class TodosListsController extends BaseModuleController {
+    todosModel!: TodosListsControllerModuleParams["todosModel"];
+    model!: TodosListsControllerModuleParams["model"];
 
-export class TodosListsController extends BaseModuleController<TodosListsModelValues> {
+    /**
+     * @todo перенести модель в родительский класс BaseModuleController
+     */
+    constructor({ todosModel, model }: TodosListsControllerModuleParams) {
+        super();
+        this.todosModel = todosModel;
+        this.model = model;
+    }
+
     async getTodosLists(req: Request, res: Response): Promise<void> {
-        console.log(321) // остановился тут, понять почему не доходят запросы сюда
         try {
             const todosLists = await this.model.find();
             res.status(200).json(todosLists);
@@ -90,8 +95,8 @@ export class TodosListsController extends BaseModuleController<TodosListsModelVa
             const isValidId = mongoose.Types.ObjectId.isValid(id);
             if (isValidId) {
                 const deletedTodosList = await this.model.findByIdAndDelete(id);
-                const deletedTodo = await todosController.model.deleteMany({ todosListId: id });
-
+                const deletedTodo = await this.todosModel.deleteMany({ todosListId: id });
+                
                 if (deletedTodosList && deletedTodo) {
                     res.status(200).send({
                         details: deletedTodosList,

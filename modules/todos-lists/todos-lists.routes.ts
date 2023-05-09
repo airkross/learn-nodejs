@@ -1,21 +1,16 @@
 import { BaseModuleRoutes } from "../../config/base-module/base-module.routes";
-// import todosListsController from "./todos-lists.controller";
+import { TodosListsController } from './todos-lists.controller'
 
-// const { getTodosLists, getTodoList, addTodosList, editTodosList, deleteTodosList } = todosListsController;
+export class TodosListsRouter extends BaseModuleRoutes<TodosListsController> {
+    override routesInit() {
+        this.router.get("/todos-lists", this.controllerModule.getTodosLists.bind(this.controllerModule));
 
-export class TodosListsRouter extends BaseModuleRoutes {
-    /**
-     * @todo порефачить добавление роутов чтоб убрать импорт todosController
-     */
-    override addRoutes() {
-        // this.router.get("/todos-lists/:list_id/todos", getTodosLists.bind(todosListsController));
+        this.router.get("/todos-lists/:id", this.controllerModule.getTodoList.bind(this.controllerModule));
 
-        // this.router.get("/todos-lists/:list_id/todos/:id", getTodoList.bind(todosListsController));
+        this.router.post("/todos-lists", this.controllerModule.addTodosList.bind(this.controllerModule));
 
-        // this.router.post("/todos-lists/:list_id/todos", addTodosList.bind(todosListsController));
+        this.router.put("/todos-lists/:id", this.controllerModule.editTodosList.bind(this.controllerModule));
 
-        // this.router.put("/todos-lists/:list_id/todos/:id", editTodosList.bind(todosListsController));
-
-        // this.router.delete("/todos-lists/:list_id/todos/:id", deleteTodosList.bind(todosListsController));
+        this.router.delete("/todos-lists/:id", this.controllerModule.deleteTodosList.bind(this.controllerModule));
     }
 }

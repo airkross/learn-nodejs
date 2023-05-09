@@ -1,11 +1,21 @@
+import mongoose from "mongoose";
 import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
-import { TodoModel } from "./todos.model";
-import { TodoModelValues } from "./todos.types";
-import todosModule from "../todos-lists";
-import mongoose from "mongoose";
+import { TodosControllerModuleParams } from "./todos.types";
 
-export class TodosController extends BaseModuleController<TodoModelValues> {
+export class TodosController extends BaseModuleController {
+    todosListsModel!: TodosControllerModuleParams["todosListsModel"];
+    model!: TodosControllerModuleParams["model"];
+
+    /**
+     * @todo перенести модель в родительский класс BaseModuleController
+     */
+    constructor({ todosListsModel, model }: TodosControllerModuleParams) {
+        super();
+        this.todosListsModel = todosListsModel;
+        this.model = model;
+    }
+
     async getTodos(req: Request, res: Response): Promise<void> {
         try {
             const { id, list_id } = req.params;
@@ -50,10 +60,7 @@ export class TodosController extends BaseModuleController<TodoModelValues> {
             const isValidListId = mongoose.Types.ObjectId.isValid(list_id);
 
             if (isValidListId) {
-                /**
-                 * @todo использовать todosModule через конструктор
-                 */
-                const todoList = await todosModule.controllerModule.model.findById(list_id);
+                const todoList = await this.todosListsModel.findById(list_id);
                 const newTodo = await new this.model({
                     ...req.body,
                     isChecked: false,
@@ -162,5 +169,3 @@ export class TodosController extends BaseModuleController<TodoModelValues> {
         }
     }
 }
-
-export default new TodosController(TodoModel);

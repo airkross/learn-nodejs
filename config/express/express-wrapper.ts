@@ -15,6 +15,15 @@ export class ExpressWrapper {
         this.express.use(bodyParser.urlencoded({ extended: true }));
         this.express.use(bodyParser.json());
 
+        // const pathFile = path.join(ROOT_PATH, "modules", "index-example.ts")
+        // import(pathFile).then((modules) => {
+            
+        //     console.log(5555, modules.default)
+        //     modules.default.forEach((item) => {
+        //         console.log(6666, item)
+        //     })
+        // })
+
         const readRoutesFolder = (folderPath: string): void => {
             fs.readdirSync(folderPath).forEach((item) => {
                 const itemPath = path.join(folderPath, item);
@@ -31,6 +40,7 @@ export class ExpressWrapper {
                 }
             });
         };
+
         readRoutesFolder(path.join(ROOT_PATH, "modules"));
     }
 

@@ -1,10 +1,13 @@
-import { BaseModuleParams, BaseModelValues } from "../../config/base-module/base-module.types";
-import { TodosListsRouter } from './todos-lists.routes'
-import { TodosListsController } from './todos-lists.controller'
+import { Model } from 'mongoose'
+import { BaseModelValues } from "../../config/base-module/base-module.types";
+import { TodosModelValues } from '../todos/todos.types'
 
 export interface TodosListsModelValues extends BaseModelValues {
     title: string
     description?: string
 }
 
-export type TodosListsModuleParams = BaseModuleParams<TodosListsRouter, TodosListsModelValues, TodosListsController>
+export interface TodosListsControllerModuleParams {
+    todosModel: Model<TodosModelValues>
+    model: Model<TodosListsModelValues>
+}

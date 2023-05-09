@@ -1,41 +1,29 @@
-import { BaseModule } from '../../config/base-module'
-import { TodosRouter } from './todos.routes'
-import { TodosController } from './todos.controller'
-import { TodoModel } from './todos.model'
-import { TodosModuleParams, TodoModelValues } from './todos.types'
+import { BaseModule } from "../../config/base-module";
+import { TodosRouter } from "./todos.routes";
+import { TodosController } from "./todos.controller";
+import { TodosModel } from "./todos.model";
+import { TodosModelValues } from "./todos.types";
+import { TodosListModel } from "../todos-lists/todos-lists.model";
 
-class TodosModule extends BaseModule<TodosRouter, TodoModelValues, TodosController> {
-    constructor(params: TodosModuleParams) {
-        super(params)
-
-        this.init()
+export class TodosModule extends BaseModule<TodosController, TodosRouter, TodosModelValues> {
+    protected override getRouterModule() {
+        return new TodosRouter({
+            controllerModule: this.controllerModule,
+        });
     }
 
-    init() {
-        this.routesInit()
+    protected override getControllerModule() {
+        return new TodosController({
+            todosListsModel: TodosListModel,
+            model: this.modelModule
+        });
     }
 
-    /**
-     * @todo возможно перенести этот метод инита в модуль роутов
-     */
-    routesInit() {
-        this.routerModule.router.get("/todos-lists/:list_id/todos", this.controllerModule.getTodos.bind(this.controllerModule));
-
-        this.routerModule.router.get("/todos-lists/:list_id/todos/:id", this.controllerModule.getTodo.bind(this.controllerModule));
-
-        this.routerModule.router.post("/todos-lists/:list_id/todos", this.controllerModule.addTodo.bind(this.controllerModule));
-
-        this.routerModule.router.put("/todos-lists/:list_id/todos/:id", this.controllerModule.editTodo.bind(this.controllerModule));
-
-        this.routerModule.router.patch("/todos-lists/:list_id/todos/:id", this.controllerModule.checkTodo.bind(this.controllerModule));
-
-        this.routerModule.router.delete("/todos-lists/:list_id/todos/:id", this.controllerModule.deleteTodo.bind(this.controllerModule));
+    protected override getModelModule() {
+        return TodosModel;
     }
 }
 
-const todosModule = new TodosModule({
-    routerModule: new TodosRouter(),
-    controllerModule: new TodosController(TodoModel)
-})
+const todosModule = new TodosModule()
 
-export default todosModule
+export default todosModule;

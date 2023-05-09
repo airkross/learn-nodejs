@@ -1,38 +1,32 @@
+import { Model } from 'mongoose'
 import { BaseModule } from '../../config/base-module'
 import { TodosListsRouter } from './todos-lists.routes'
 import { TodosListsController } from './todos-lists.controller'
 import { TodosListModel } from './todos-lists.model'
-import { TodosListsModuleParams, TodosListsModelValues } from './todos-list.types'
+import { TodosListsModelValues } from './todos-list.types'
+import { TodosModel } from '../todos/todos.model'
 
-class TodosListsModule extends BaseModule<TodosListsRouter, TodosListsModelValues, TodosListsController> {
-    constructor(params: TodosListsModuleParams) {
-        super(params)
-        this.init()
+export class TodosListsModule extends BaseModule<TodosListsController, TodosListsRouter, TodosListsModelValues> {
+    protected override getRouterModule() {
+        return new TodosListsRouter({
+            controllerModule: this.controllerModule,
+        });
     }
 
-    init() {
-        this.routesInit()
+    protected override getControllerModule() {
+        /**
+         * @todo исправить баг что todosModule - undefined
+         */
+        return new TodosListsController({
+            model: this.modelModule,
+            todosModel: TodosModel,
+        });
     }
 
-    /**
-     * @todo возможно перенести этот метод инита в модуль роутов
-     */
-    routesInit() {
-        this.routerModule.router.get("/todos-lists", this.controllerModule.getTodosLists.bind(this.controllerModule));
-
-        this.routerModule.router.get("/todos-lists/:id", this.controllerModule.getTodoList.bind(this.controllerModule));
-
-        this.routerModule.router.post("/todos-lists", this.controllerModule.addTodosList.bind(this.controllerModule));
-
-        this.routerModule.router.put("/todos-lists/:id", this.controllerModule.editTodosList.bind(this.controllerModule));
-
-        this.routerModule.router.delete("/todos-lists/:id", this.controllerModule.deleteTodosList.bind(this.controllerModule));
+    protected override getModelModule() {
+        return TodosListModel;
     }
 }
+const todosLists = new TodosListsModule()
 
-const todosListsModule = new TodosListsModule({
-    routerModule: new TodosListsRouter(),
-    controllerModule: new TodosListsController(TodosListModel)
-})
-
-export default todosListsModule
+export default todosLists
