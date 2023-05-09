@@ -3,11 +3,7 @@ import { BaseModelValues } from "./base-module.types";
 import { BaseModuleRoutes } from "./base-module.routes";
 import { BaseModuleController } from "./base-module.controller";
 
-export class BaseModule<
-    C extends BaseModuleController = BaseModuleController,
-    R extends BaseModuleRoutes<C> = BaseModuleRoutes<C>, 
-    V extends BaseModelValues = BaseModelValues
-> {
+export class BaseModule<C extends BaseModuleController, R extends BaseModuleRoutes<C>, V extends BaseModelValues> {
     routerModule!: R;
     controllerModule!: C;
     modelModule!: Model<V>;

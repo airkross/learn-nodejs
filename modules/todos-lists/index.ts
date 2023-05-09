@@ -1,10 +1,10 @@
-import { Model } from 'mongoose'
-import { BaseModule } from '../../config/base-module'
-import { TodosListsRouter } from './todos-lists.routes'
-import { TodosListsController } from './todos-lists.controller'
-import { TodosListModel } from './todos-lists.model'
-import { TodosListsModelValues } from './todos-list.types'
-import { TodosModel } from '../todos/todos.model'
+import { Model } from "mongoose";
+import { BaseModule } from "../../config/base-module";
+import { TodosListsRouter } from "./todos-lists.routes";
+import { TodosListsController } from "./todos-lists.controller";
+import { TodosListModel } from "./todos-lists.model";
+import { TodosListsModelValues } from "./todos-list.types";
+import { TodosModel } from "../todos/todos.model";
 
 export class TodosListsModule extends BaseModule<TodosListsController, TodosListsRouter, TodosListsModelValues> {
     protected override getRouterModule() {
@@ -27,6 +27,6 @@ export class TodosListsModule extends BaseModule<TodosListsController, TodosList
         return TodosListModel;
     }
 }
-const todosLists = new TodosListsModule()
+const todosLists = new TodosListsModule();
 
-export default todosLists
+export default todosLists;

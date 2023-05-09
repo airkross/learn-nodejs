@@ -1,5 +1,5 @@
 import { BaseModuleRoutes } from "../../config/base-module/base-module.routes";
-import { TodosListsController } from './todos-lists.controller'
+import { TodosListsController } from "./todos-lists.controller";
 
 export class TodosListsRouter extends BaseModuleRoutes<TodosListsController> {
     override routesInit() {

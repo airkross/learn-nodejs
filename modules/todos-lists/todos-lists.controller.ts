@@ -96,7 +96,7 @@ export class TodosListsController extends BaseModuleController {
             if (isValidId) {
                 const deletedTodosList = await this.model.findByIdAndDelete(id);
                 const deletedTodo = await this.todosModel.deleteMany({ todosListId: id });
-                
+
                 if (deletedTodosList && deletedTodo) {
                     res.status(200).send({
                         details: deletedTodosList,

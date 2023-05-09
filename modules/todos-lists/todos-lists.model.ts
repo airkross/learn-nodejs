@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { TodosListsModelValues } from './todos-list.types'
+import { TodosListsModelValues } from "./todos-list.types";
 
 /**
  * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema

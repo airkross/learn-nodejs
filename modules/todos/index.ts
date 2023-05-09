@@ -15,7 +15,7 @@ export class TodosModule extends BaseModule<TodosController, TodosRouter, TodosM
     protected override getControllerModule() {
         return new TodosController({
             todosListsModel: TodosListModel,
-            model: this.modelModule
+            model: this.modelModule,
         });
     }
 
@@ -24,6 +24,6 @@ export class TodosModule extends BaseModule<TodosController, TodosRouter, TodosM
     }
 }
 
-const todosModule = new TodosModule()
+const todosModule = new TodosModule();
 
 export default todosModule;

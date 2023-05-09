@@ -17,7 +17,7 @@ export class ExpressWrapper {
 
         // const pathFile = path.join(ROOT_PATH, "modules", "index-example.ts")
         // import(pathFile).then((modules) => {
-            
+
         //     console.log(5555, modules.default)
         //     modules.default.forEach((item) => {
         //         console.log(6666, item)
@@ -28,9 +28,9 @@ export class ExpressWrapper {
             fs.readdirSync(folderPath).forEach((item) => {
                 const itemPath = path.join(folderPath, item);
 
-                if (fs.statSync(itemPath).isFile() && item === 'index.ts') {
+                if (fs.statSync(itemPath).isFile() && item === "index.ts") {
                     import(itemPath).then((module) => {
-                        const { router } = module.default.routerModule
+                        const { router } = module.default.routerModule;
                         if (typeof router === "function") {
                             this.express.use(router);
                         }
