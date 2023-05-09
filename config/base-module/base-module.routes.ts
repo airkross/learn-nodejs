@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { BaseModuleController } from "./base-module.controller";
-import { BaseRouterModuleParams } from "./base-module.types";
+import { BaseModelValues, BaseRouterModuleParams } from "./base-module.types";
 
-export class BaseModuleRoutes<C extends BaseModuleController> {
+export class BaseModuleRoutes<
+    V extends BaseModelValues, 
+    C extends BaseModuleController<V>
+> {
     router!: ReturnType<typeof Router>;
     controllerModule!: C;
 
-    constructor({ controllerModule }: BaseRouterModuleParams<C>) {
+    constructor({ controllerModule }: BaseRouterModuleParams<V, C>) {
         this.router = Router();
         this.controllerModule = controllerModule;
         /**

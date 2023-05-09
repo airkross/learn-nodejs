@@ -2,6 +2,9 @@ import { BaseModuleController } from "./base-module.controller";
 
 export type BaseModelValues = Record<string, unknown>;
 
-export interface BaseRouterModuleParams<C extends BaseModuleController = BaseModuleController> {
+export interface BaseRouterModuleParams<
+    V extends BaseModelValues = BaseModelValues, 
+    C extends BaseModuleController<V> = BaseModuleController<V>
+> {
     controllerModule: C;
 }

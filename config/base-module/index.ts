@@ -3,17 +3,19 @@ import { BaseModelValues } from "./base-module.types";
 import { BaseModuleRoutes } from "./base-module.routes";
 import { BaseModuleController } from "./base-module.controller";
 
-export class BaseModule<C extends BaseModuleController, R extends BaseModuleRoutes<C>, V extends BaseModelValues> {
+export class BaseModule<
+    V extends BaseModelValues,
+    C extends BaseModuleController<V>, 
+    R extends BaseModuleRoutes<V, C>
+> {
     routerModule!: R;
     controllerModule!: C;
-    modelModule!: Model<V>;
 
     constructor() {
         this.init();
     }
 
     protected init(): void {
-        this.modelModule = this.getModelModule();
         this.controllerModule = this.getControllerModule();
         this.routerModule = this.getRouterModule();
     }
@@ -23,10 +25,6 @@ export class BaseModule<C extends BaseModuleController, R extends BaseModuleRout
     }
 
     protected getControllerModule(): C {
-        throw new Error("Method not implemented.");
-    }
-
-    protected getModelModule(): Model<V> {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { TodosListsModelValues } from "./todos-list.types";
+import { TodosListsModelValues } from "./todos-lists.types";
 
 /**
  * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema
@@ -15,4 +15,4 @@ const TodoList = new mongoose.Schema({
     },
 });
 
-export const TodosListModel = mongoose.model<TodosListsModelValues>("TodosLists", TodoList);
+export const TodosListsModel = mongoose.model<TodosListsModelValues>("TodosLists", TodoList);

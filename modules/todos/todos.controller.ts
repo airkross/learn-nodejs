@@ -1,19 +1,24 @@
-import mongoose from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { Request, Response } from "express";
 import { BaseModuleController } from "../../config/base-module/base-module.controller";
-import { TodosControllerModuleParams } from "./todos.types";
+import { TodosModelValues } from "./todos.types";
+import { TodosModel } from "./todos.model";
+import { TodosListsModel } from "../todos-lists/todos-lists.model";
+import { TodosListsModelValues } from "../todos-lists/todos-lists.types";
 
-export class TodosController extends BaseModuleController {
-    todosListsModel!: TodosControllerModuleParams["todosListsModel"];
-    model!: TodosControllerModuleParams["model"];
-
+export class TodosController extends BaseModuleController<TodosModelValues> {
     /**
-     * @todo перенести модель в родительский класс BaseModuleController
+     * @todo уменьшить связность с моделью другого модуля. Получить todosListsModel через refModel?(): Model<model> колбек
      */
-    constructor({ todosListsModel, model }: TodosControllerModuleParams) {
+    todosListsModel!: Model<TodosListsModelValues>;
+
+    constructor() {
         super();
-        this.todosListsModel = todosListsModel;
-        this.model = model;
+        this.todosListsModel = TodosListsModel;
+    }
+
+    protected override getModel() {
+        return TodosModel
     }
 
     async getTodos(req: Request, res: Response): Promise<void> {
