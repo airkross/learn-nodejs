@@ -1,4 +1,4 @@
-import { BaseModuleRoutes } from "../../containers/base-module/base-module.routes";
+import { BaseModuleRoutes } from "../../containers/base-module/base-module.router";
 import { TodosController } from "./todos.controller";
 import { TodosModelValues } from "./todos.types";
 

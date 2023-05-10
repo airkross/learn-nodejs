@@ -1,6 +1,5 @@
-import { Model } from "mongoose";
 import { BaseModelValues } from "./base-module.types";
-import { BaseModuleRoutes } from "./base-module.routes";
+import { BaseModuleRoutes } from "./base-module.router";
 import { BaseModuleController } from "./base-module.controller";
 
 export class BaseModule<
