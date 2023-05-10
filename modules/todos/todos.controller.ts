@@ -1,6 +1,6 @@
 import mongoose, { Model } from "mongoose";
 import { Request, Response } from "express";
-import { BaseModuleController } from "../../config/base-module/base-module.controller";
+import { BaseModuleController } from "../../containers/base-module/base-module.controller";
 import { TodosModelValues } from "./todos.types";
 import { TodosModel } from "./todos.model";
 import { TodosListsModel } from "../todos-lists/todos-lists.model";

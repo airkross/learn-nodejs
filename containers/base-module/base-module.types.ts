@@ -1,0 +1,1 @@
+export type BaseModelValues = Record<string, unknown>;

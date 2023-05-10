@@ -1,4 +1,4 @@
-import { BaseModule } from "../../config/base-module";
+import { BaseModule } from "../../containers/base-module";
 import { TodosListsRouter } from "./todos-lists.routes";
 import { TodosListsController } from "./todos-lists.controller";
 import { TodosListsModelValues } from "./todos-lists.types";

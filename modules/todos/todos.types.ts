@@ -1,4 +1,4 @@
-import { BaseModelValues } from "../../config/base-module/base-module.types";
+import { BaseModelValues } from "../../containers/base-module/base-module.types";
 
 export interface TodosModelValues extends BaseModelValues {
     isChecked?: boolean;
