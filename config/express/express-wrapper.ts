@@ -18,8 +18,8 @@ export class ExpressWrapper {
         const pathFile = path.join(ROOT_PATH, "modules", "index.ts")
 
         import(pathFile).then((modules) => {
-            for (let instenceName in modules) {
-                const instence = new modules[instenceName]()
+            for (let moduleName in modules) {
+                const instence = new modules[moduleName]()
                 const { router } = instence.router
 
                 if (typeof router === "function") {
