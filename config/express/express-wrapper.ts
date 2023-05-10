@@ -15,33 +15,18 @@ export class ExpressWrapper {
         this.express.use(bodyParser.urlencoded({ extended: true }));
         this.express.use(bodyParser.json());
 
-        // const pathFile = path.join(ROOT_PATH, "modules", "index-example.ts")
-        // import(pathFile).then((modules) => {
+        const pathFile = path.join(ROOT_PATH, "modules", "index.ts")
 
-        //     console.log(5555, modules.default)
-        //     modules.default.forEach((item) => {
-        //         console.log(6666, item)
-        //     })
-        // })
+        import(pathFile).then((modules) => {
+            for (let instenceName in modules) {
+                const instence = new modules[instenceName]()
+                const { router } = instence.router
 
-        const readRoutesFolder = (folderPath: string): void => {
-            fs.readdirSync(folderPath).forEach((item) => {
-                const itemPath = path.join(folderPath, item);
-
-                if (fs.statSync(itemPath).isFile() && item === "index.ts") {
-                    import(itemPath).then((module) => {
-                        const { router } = module.default.routerModule;
-                        if (typeof router === "function") {
-                            this.express.use(router);
-                        }
-                    });
-                } else if (fs.statSync(itemPath).isDirectory()) {
-                    readRoutesFolder(itemPath);
+                if (typeof router === "function") {
+                    this.express.use(router);
                 }
-            });
-        };
-
-        readRoutesFolder(path.join(ROOT_PATH, "modules"));
+            }
+        })
     }
 
     start(port: number) {

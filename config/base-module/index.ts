@@ -8,14 +8,14 @@ export class BaseModule<
     C extends BaseModuleController<V>, 
     R extends BaseModuleRoutes<V, C>
 > {
-    routerModule!: R;
+    router!: R;
 
     constructor() {
         this.init();
     }
 
     protected init(): void {
-        this.routerModule = this.getRouter();
+        this.router = this.getRouter();
     }
 
     protected getRouter(): R {

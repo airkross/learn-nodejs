@@ -8,5 +8,3 @@ export class TodosListsModule extends BaseModule<TodosListsModelValues, TodosLis
         return new TodosListsRouter();
     }
 }
-
-export default new TodosListsModule();
