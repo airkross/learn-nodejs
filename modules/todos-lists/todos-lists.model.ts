@@ -5,7 +5,7 @@ import { TodosListsModelValues } from "./todos-lists.types";
  * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema
  */
 
-const TodoList = new mongoose.Schema({
+const todoListSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
@@ -15,4 +15,4 @@ const TodoList = new mongoose.Schema({
     },
 });
 
-export const TodosListsModel = mongoose.model<TodosListsModelValues>("TodosLists", TodoList);
+export const TodosListsModel = mongoose.model<TodosListsModelValues>("TodosLists", todoListSchema);

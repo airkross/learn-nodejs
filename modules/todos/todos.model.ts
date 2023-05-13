@@ -5,7 +5,7 @@ import { TodosModelValues } from "./todos.types";
  * @todo возможно сделать обертку над схемами унаследоваться от mongoose.Schema
  */
 
-const Todo = new mongoose.Schema({
+const todosSchema = new mongoose.Schema({
     isChecked: {
         type: Boolean,
     },
@@ -22,4 +22,4 @@ const Todo = new mongoose.Schema({
     },
 });
 
-export const TodosModel = mongoose.model<TodosModelValues>("todos", Todo);
+export const TodosModel = mongoose.model<TodosModelValues>("Todos", todosSchema);
