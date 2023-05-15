@@ -15,7 +15,7 @@ export class TodosListsController extends BaseModuleController<TodosListsModelVa
     }
 
     protected override getModel() {
-        return TodosListsModel
+        return TodosListsModel;
     }
 
     async getTodosLists(req: Request, res: Response): Promise<void> {
@@ -30,18 +30,14 @@ export class TodosListsController extends BaseModuleController<TodosListsModelVa
     async getTodoList(req: Request, res: Response): Promise<void> {
         try {
             const { id } = req.params;
-            const isValidId = mongoose.Types.ObjectId.isValid(id);
+            const todosList = await this.model.findById(id);
 
-            if (isValidId) {
-                const todosList = await this.model.findById(id);
-
-                if (todosList) {
-                    res.status(200).json(todosList);
-                    return;
-                }
+            if (!todosList) {
+                res.status(404).json({ message: `Список заметок с id=${id} не существует.` });
+                return;
             }
 
-            res.status(404).json({ message: `Список заметок с id=${id} не существует.` });
+            res.status(200).json(todosList);
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -69,23 +65,18 @@ export class TodosListsController extends BaseModuleController<TodosListsModelVa
 
     async editTodosList(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const isValidId = mongoose.Types.ObjectId.isValid(id);
+            const { list_id } = req.params;
+            const updatedTodosList = await this.model.findByIdAndUpdate({ _id: list_id }, req.body);
 
-            if (isValidId) {
-                await this.model.updateOne({ _id: id }, req.body);
-
-                const updatedTodosList = await this.model.findById(id);
-
-                res.status(200).json({
-                    details: updatedTodosList,
-                    message: "Список заметок усшено редактирован.",
-                });
-
+            if (!updatedTodosList) {
+                res.status(404).json({ message: `Списка заметок с list_id=${list_id} не существует.` });
                 return;
             }
 
-            res.status(404).json({ message: `Списка заметок с id=${id} не существует.` });
+            res.status(200).json({
+                details: updatedTodosList,
+                message: "Список заметок усшено редактирован.",
+            });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
         }
@@ -93,23 +84,20 @@ export class TodosListsController extends BaseModuleController<TodosListsModelVa
 
     async deleteTodosList(req: Request, res: Response): Promise<void> {
         try {
-            const { id } = req.params;
-            const isValidId = mongoose.Types.ObjectId.isValid(id);
-            if (isValidId) {
-                const deletedTodosList = await this.model.findByIdAndDelete(id);
-                const deletedTodo = await this.todosModel.deleteMany({ todosListId: id });
+            const { list_id } = req.params;
+            const deletedTodosList = await this.model.findByIdAndDelete(list_id);
 
-                if (deletedTodosList && deletedTodo) {
-                    res.status(200).send({
-                        details: deletedTodosList,
-                        message: `Cписок заметок с id=${id} успешно удален.`,
-                    });
-                    return;
-                }
+            if (!deletedTodosList) {
+                res.status(404).json({
+                    message: `Список заметок с list_id=${list_id} не существует.`,
+                });
+                return;
             }
 
-            res.status(404).json({
-                message: `Список заметок с id=${id} не существует.`,
+            await this.todosModel.deleteMany({ todosListId: list_id });
+            res.status(200).send({
+                details: deletedTodosList,
+                message: `Cписок заметок с list_id=${list_id} успешно удален.`,
             });
         } catch (error) {
             res.status(500).send(`Ошибка сервера: ${error}`);
